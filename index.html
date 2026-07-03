@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flux VPN Merger — Генератор Супер-Подписок 2026</title>
+    <meta name="description" content="Бесплатный объединитель лучших VPN-подписок для Happ, Sing-Box, v2rayNG и Nekobox. Фильтрация дубликатов, обход DPI/ТСПУ и регулярное автообновление.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background elements for ambient glow -->
+    <div class="glow-bg">
+        <div class="glow-circle cyan"></div>
+        <div class="glow-circle purple"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <span class="pulse-dot"></span>
+                <h1>FLUX VPN <span>TITANIUM</span></h1>
+            </div>
+            <div class="badge">v2.0 Beta · 2026</div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h2>Сверхскоростная супер-подписка с обходом DPI и ТСПУ</h2>
+            <p>Автоматическое слияние, фильтрация дубликатов и оптимизация более 100 источников VPN в единый URL. Идеально настроено для клиентов Happ, Sing-Box, Shadowrocket, Nekobox и v2rayNG в России.</p>
+        </section>
+
+        <!-- Stats Dashboard -->
+        <section class="stats-panel card" id="statsSection">
+            <h3 class="card-title">Текущее состояние базы серверов</h3>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-num" id="statTotal">-</div>
+                    <div class="stat-lbl">Всего нод</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-num" id="statVless">-</div>
+                    <div class="stat-lbl">VLESS / Reality</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-num" id="statVmess">-</div>
+                    <div class="stat-lbl">VMess</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-num" id="statTrojan">-</div>
+                    <div class="stat-lbl">Trojan</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-num" id="statSs">-</div>
+                    <div class="stat-lbl">Shadowsocks</div>
+                </div>
+                <div class="stat-box highlight">
+                    <div class="stat-num" id="statRu">-</div>
+                    <div class="stat-lbl">🇷🇺 Оптимально для РФ</div>
+                </div>
+            </div>
+            <div class="update-time">
+                <span>Последнее обновление:</span> <strong id="updateTime">-</strong>
+            </div>
+        </section>
+
+        <!-- Generator Section -->
+        <section class="generator-panel card">
+            <h3 class="card-title">Генератор супер-подписки</h3>
+            
+            <div class="form-group">
+                <label>1. Выберите протоколы для включения:</label>
+                <div class="protocol-selectors">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="checkVless" checked>
+                        <span class="custom-checkbox"></span>
+                        VLESS / Reality
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="checkVmess" checked>
+                        <span class="custom-checkbox"></span>
+                        VMess
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="checkTrojan" checked>
+                        <span class="custom-checkbox"></span>
+                        Trojan
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="checkSs" checked>
+                        <span class="custom-checkbox"></span>
+                        Shadowsocks
+                    </label>
+                    <label class="checkbox-container highlight">
+                        <input type="checkbox" id="checkRuOnly">
+                        <span class="custom-checkbox"></span>
+                        🇷🇺 Только обход блокировок (РФ-оптимизированные)
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>2. Формат кодирования подписки:</label>
+                <div class="format-selectors">
+                    <button type="button" class="format-btn active" id="btnBase64">Base64 (Рекомендуется для Happ)</button>
+                    <button type="button" class="format-btn" id="btnRaw">Raw Text (Обычный текст)</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>3. Ваша персональная ссылка:</label>
+                <div class="url-copy-box">
+                    <input type="text" id="subUrlInput" readonly value="Загрузка...">
+                    <button class="copy-btn" id="copyUrlBtn">Копировать</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Integration Guide -->
+        <section class="guide-panel grid-2">
+            <div class="card">
+                <h3 class="card-title">🚀 Как настроить Happ</h3>
+                <ol class="guide-list">
+                    <li>Скопируйте сгенерированную выше ссылку.</li>
+                    <li>В приложении <strong>Happ</strong>: перейдите во вкладку <strong>Subscriptions</strong> (Подписки) → нажмите <strong>Add</strong> (+) и вставьте ссылку.</li>
+                    <li>Нажмите кнопку <strong>Refresh</strong> (🔄) для загрузки серверов.</li>
+                    <li>Перейдите в <strong>Settings</strong> → <strong>Routing</strong> → выберите режим <strong>"Только заблокированные"</strong> (CIDR режим для экономии трафика и максимальной скорости).</li>
+                </ol>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">🛠 Как создать свой авто-объединитель бесплатно</h3>
+                <ol class="guide-list">
+                    <li>Сделайте Fork репозитория на GitHub (или создайте новый репозиторий).</li>
+                    <li>Перенесите туда файлы `merge.py`, `.github/workflows/update.yml`, `index.html`, `styles.css` и `app.js`.</li>
+                    <li>В настройках репозитория: <strong>Settings</strong> → <strong>Actions</strong> → <strong>General</strong> → в самом низу в <strong>Workflow permissions</strong> выберите <strong>"Read and write permissions"</strong>.</li>
+                    <li>Перейдите во вкладку <strong>Settings</strong> → <strong>Pages</strong> → в разделе Build and deployment выберите ветку <code>main</code> (папка <code>/ (root)</code>).</li>
+                    <li>GitHub Actions будет автоматически обновлять ваши конфиги каждые 6 часов, а сайт будет доступен бесплатно.</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p>Flux VPN Titanium © 2026. Распространяется свободно. Слияние серверов производится без логов и посредников.</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Ссылка скопирована в буфер обмена!</div>
+
+    <script src="app.js"></script>
+</body>
+</html>
