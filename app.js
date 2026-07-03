@@ -133,7 +133,7 @@ function updateSubscriptionUrl() {
     } else {
         // Construct base repo URL
         const path = window.location.pathname.replace(/\/index\.html$/, '');
-        baseUrl = `${window.location.origin}${path}/`;
+        baseUrl = `${window.location.origin}${path}`;
         if (!baseUrl.endsWith('/')) {
             baseUrl += '/';
         }
