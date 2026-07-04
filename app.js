@@ -61,6 +61,31 @@ const recBoxTitle = document.getElementById('recBoxTitle');
 // =============================================================================
 const SUBSCRIPTION_DATABASE = [
     {
+        category: "🏆 РАЗДЕЛ 0: ТОП-20 ЛУЧШИХ ДЛЯ HAPP (проверенные, стабильные)",
+        items: [
+            { name: "1. KvRuVPN — основная, SNI/CIDR для России ★", url: "https://gitverse.ru/api/repos/kfwlru/sub/raw/branch/main/212.txt" },
+            { name: "2. Goida Node 26 ★ PREMIUM", url: "https://github.com/AvenCores/goida-vpn-configs/raw/refs/heads/main/githubmirror/26.txt" },
+            { name: "3. Reality XTLS Telegram Collector ★", url: "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/protocols/reality.txt" },
+            { name: "4. Epodonios Sub1 — Reality ★", url: "https://raw.githubusercontent.com/Epodonios/v2ray-configs/refs/heads/main/Sub1.txt" },
+            { name: "5. F0rc3Run VLESS — CIDR авто-тест ★", url: "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/refs/heads/main/splitted-by-protocol/vless.txt" },
+            { name: "6. Barry-far VLESS Reality ★", url: "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Splitted-By-Protocol/vless.txt" },
+            { name: "7. igareck — VLESS для России, SNI bypass ★", url: "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/BLACK_VLESS_RUS.txt" },
+            { name: "8. STR97 — DPI+SNI Bypass для РФ ★", url: "https://raw.githubusercontent.com/STR97/STRUGOV/refs/heads/main/STR.BYPASS" },
+            { name: "9. MatinGhanbari VLESS Filtered CIDR ★", url: "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/vless.txt" },
+            { name: "10. Goida Node 1 (стабильный)", url: "https://github.com/AvenCores/goida-vpn-configs/raw/refs/heads/main/githubmirror/1.txt" },
+            { name: "11. V2RayRoot VLESS Reality", url: "https://raw.githubusercontent.com/V2RayRoot/V2RayConfig/refs/heads/main/Config/vless.txt" },
+            { name: "12. 4n0nymou3 Multi-Proxy Reality+SNI", url: "https://github.com/4n0nymou3/multi-proxy-config-fetcher/raw/refs/heads/main/configs/proxy_configs.txt" },
+            { name: "13. Sakha1370 — авто-проверенные прокси", url: "https://raw.githubusercontent.com/sakha1370/OpenRay/refs/heads/main/output/all_valid_proxies.txt" },
+            { name: "14. Sevcator — VL (VLESS) SNI-aware", url: "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/protocols/vl.txt" },
+            { name: "15. Barry-far Sub1 ★", url: "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub1.txt" },
+            { name: "16. Ebrasha — авто-сбор VLESS ★", url: "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/refs/heads/main/vless_configs.txt" },
+            { name: "17. LalatinaHub Mineral Nodes ★", url: "https://github.com/LalatinaHub/Mineral/raw/refs/heads/master/result/nodes" },
+            { name: "18. Wuqb2i4f XTLS Mix-URI", url: "https://raw.githubusercontent.com/wuqb2i4f/xray-config-toolkit/main/output/base64/mix-uri" },
+            { name: "19. Goida Node 5", url: "https://github.com/AvenCores/goida-vpn-configs/raw/refs/heads/main/githubmirror/5.txt" },
+            { name: "20. KvRuVPN2 — белые списки CIDR", url: "https://gitverse.ru/api/repos/ru-wbl/wl/raw/branch/master/KvRuVPN/KvRuVPN.txt" }
+        ]
+    },
+    {
         category: "🔥 РАЗДЕЛ 1: GOIDA — ЛУЧШЕЕ ДЛЯ RUSSIA (DPI+SNI bypass)",
         items: [
             { name: "Goida Node 1 (стабильный)", url: "https://github.com/AvenCores/goida-vpn-configs/raw/refs/heads/main/githubmirror/1.txt" },
@@ -811,9 +836,20 @@ async function runSubscriptionDiagnostic() {
     } else {
         filteredNodes = parsedNodes.filter(node => {
             const nl = node.name.toLowerCase();
+            if (selectedGroupValue === "top20") {
+                return (
+                    nl.includes("kvru") || nl.includes("kfwlru") || nl.includes("goida") ||
+                    nl.includes("epodonios") || nl.includes("f0rc3run") || nl.includes("barry") ||
+                    nl.includes("igareck") || nl.includes("str") || nl.includes("strugov") ||
+                    nl.includes("matinghanbari") || nl.includes("v2rayroot") || nl.includes("4n0nymou3") ||
+                    nl.includes("sakha") || nl.includes("sevcator") || nl.includes("ebrasha") ||
+                    nl.includes("lalatinahub") || nl.includes("mineral") || nl.includes("wuqb2i4f") ||
+                    node.uri.includes("reality")
+                );
+            }
             if (selectedGroupValue === "goida") return nl.includes("goida");
-            if (selectedGroupValue === "reality") return node.uri.includes("reality");
-            if (selectedGroupValue === "cidr") return nl.includes("cidr") || nl.includes("bypass") || nl.includes("russia");
+            if (selectedGroupValue === "reality") return node.uri.includes("reality") || nl.includes("reality") || nl.includes("barry") || nl.includes("epodonios");
+            if (selectedGroupValue === "cidr") return nl.includes("cidr") || nl.includes("bypass") || nl.includes("russia") || nl.includes("kvru") || nl.includes("igareck") || nl.includes("str");
             if (selectedGroupValue === "epodonios") return nl.includes("epodonios");
             if (selectedGroupValue === "barry") return nl.includes("barry");
             if (selectedGroupValue === "scraped") return nl.includes("collector") || nl.includes("scraped");
@@ -935,7 +971,10 @@ async function runCustomSubscriptionBuild() {
                 nameLower.includes("sakha") || uriLower.includes("sakha") ||
                 nameLower.includes("barry") || uriLower.includes("barry-far") || uriLower.includes("v2ray-config") ||
                 nameLower.includes("epodonios") || uriLower.includes("epodonios") ||
-                uriLower.includes("soroushmirzaei") || uriLower.includes("v2rayroot");
+                nameLower.includes("lalatinahub") || nameLower.includes("mineral") ||
+                uriLower.includes("soroushmirzaei") || uriLower.includes("v2rayroot") || 
+                uriLower.includes("f0rc3run") || uriLower.includes("wuqb2i4f") || 
+                uriLower.includes("4n0nymou3") || nameLower.includes("ebrasha") || uriLower.includes("ebrasha");
                 
             return isVerified;
         });
