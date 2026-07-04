@@ -319,6 +319,20 @@ def main():
     unique_proxies = deduplicate(all_proxies)
     print(f"Fetched {len(all_proxies)} total nodes. Deduplicated to {len(unique_proxies)} nodes.")
     
+    # Sort proxies so that verified ones come first (to make sure they are preserved in cut-off)
+    def get_priority(p):
+        name = p['name'].lower()
+        if "[212]" in name:
+            return 0  # Absolute top priority (main KvRuVPN)
+        if any(x in name for x in ['goida', 'kvru', 'kfwlru', 'ru-wbl', 'igareck', 'str', 'strugov', 'sevcator', 'sakha', 'barry', 'epodonios', 'mineral', 'lalatinahub']):
+            return 1  # Verified priority sources
+        return 2  # Scraped nodes from telegram
+        
+    unique_proxies.sort(key=get_priority)
+    
+    # Cap total database nodes to 2500 (down from 100k+ to save build time, memory and fix deployment errors)
+    unique_proxies = unique_proxies[:2500]
+    
     vless_nodes = []
     vmess_nodes = []
     trojan_nodes = []
@@ -340,6 +354,13 @@ def main():
             
         if p['is_ru_optimized'] or any(keyword in p['name'].lower() for keyword in ['ru', 'russia', 'rus', 'goida', 'рф', 'мск', 'msk']):
             ru_nodes.append(raw_uri)
+            
+    # Cap files to 1000 nodes each to make them light and compatible with clients (no memory hang)
+    vless_nodes = vless_nodes[:1000]
+    vmess_nodes = vmess_nodes[:1000]
+    trojan_nodes = trojan_nodes[:1000]
+    ss_nodes = ss_nodes[:1000]
+    ru_nodes = ru_nodes[:1000]
 
     os.makedirs('dist', exist_ok=True)
     
