@@ -493,6 +493,48 @@ function tcpPing(host, port, timeout = 1200) {
     });
 }
 
+// Perform multiple TCP checks to detect packet loss and latency stability (Jitter)
+async function testNodeQuality(node, runs = 3, timeout = 1200) {
+    let successfulRuns = 0;
+    let totalPing = 0;
+    const pings = [];
+    
+    for (let i = 0; i < runs; i++) {
+        if (i > 0) {
+            // Tiny sleep between pings to avoid flooding
+            await new Promise(resolve => setTimeout(resolve, 80));
+        }
+        const res = await tcpPing(node.host, node.port, timeout);
+        if (res.success) {
+            successfulRuns++;
+            totalPing += res.time;
+            pings.push(res.time);
+        }
+    }
+    
+    if (successfulRuns === 0) {
+        return { success: false, avgPing: 9999, jitter: 9999, lossRate: 1.0 };
+    }
+    
+    const avgPing = Math.round(totalPing / successfulRuns);
+    const minPing = Math.min(...pings);
+    const maxPing = Math.max(...pings);
+    const jitter = maxPing - minPing;
+    const lossRate = (runs - successfulRuns) / runs;
+    
+    // Server is considered stable if:
+    // 1. Loss rate is 0 (all 3 runs succeeded).
+    // 2. Jitter is low (less than 250ms variation) - high jitter indicates an overloaded server.
+    const isStable = lossRate === 0 && jitter < 250;
+    
+    return {
+        success: isStable,
+        avgPing,
+        jitter,
+        lossRate
+    };
+}
+
 // Website accessibility check
 function testSiteBypass(domain, timeout = 2500) {
     return new Promise((resolve) => {
@@ -908,7 +950,8 @@ async function runCustomSubscriptionBuild() {
 
     // Benchmark
     const benchmarkList = parsedNodes.sort(() => 0.5 - Math.random()).slice(0, Math.min(50, parsedNodes.length));
-    writeToTerminal(`[ТЕСТ] Тестирование ${benchmarkList.length} серверов...\n`);
+    writeToTerminal(`[ТЕСТ] Глубокое тестирование качества ${benchmarkList.length} серверов...\n`);
+    writeToTerminal(`[ИНФО] Каждый сервер проверяется 3 раза на стабильность и потерю пакетов.\n`);
 
     const testedNodes = [];
     const batchSize = 10;
@@ -918,21 +961,21 @@ async function runCustomSubscriptionBuild() {
         writeToTerminal(`[ПАКЕТ] Серверы [${i + 1}-${Math.min(i + batchSize, benchmarkList.length)}/${benchmarkList.length}]...\n`);
 
         const results = await Promise.all(batch.map(async (node) => {
-            const res = await tcpPing(node.host, node.port);
-            return { node, success: res.success, ping: res.time };
+            const res = await testNodeQuality(node, 3);
+            return { node, success: res.success, ping: res.avgPing };
         }));
 
         results.forEach(res => {
             if (res.success) {
                 testedNodes.push(res);
-                writeToTerminal(`  ✅ ${res.node.host} — ${res.ping}мс (${res.node.protocol.toUpperCase()})\n`);
+                writeToTerminal(`  ✅ ${res.node.host} — ср. пинг ${res.ping}мс (стабилен)\n`);
             } else {
-                writeToTerminal(`  ❌ ${res.node.host} — таймаут\n`);
+                writeToTerminal(`  ❌ ${res.node.host} — нестабилен или таймаут\n`);
             }
         });
     }
 
-    writeToTerminal(`\n[СОРТИРОВКА] Рабочих серверов: ${testedNodes.length}\n`);
+    writeToTerminal(`\n[СОРТИРОВКА] Стабильных серверов: ${testedNodes.length}\n`);
 
     if (testedNodes.length === 0) {
         writeToTerminal(`[ОШИБКА] Ни один сервер не ответил. Попробуйте ослабить фильтры.\n`);
