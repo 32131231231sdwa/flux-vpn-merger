@@ -680,6 +680,10 @@ async function runFindBestSubscription() {
 
     writeFinderLog(`${'─'.repeat(55)}\n`);
     writeFinderLog(`[ГОТОВО] Анализ завершён! Результаты отсортированы.\n`);
+    writeFinderLog(`\n[ИНСТРУКЦИЯ] Как добавить подписку в Happ:\n`);
+    writeFinderLog(`  1. Нажмите «Копировать» рядом с лучшей подпиской ниже\n`);
+    writeFinderLog(`  2. Откройте Happ → «+» → «Добавить подписку по ссылке»\n`);
+    writeFinderLog(`  3. Вставьте скопированную ссылку → Сохранить\n`);
 
     // Build leaderboard UI
     finderLeaderboard.innerHTML = '';
@@ -938,23 +942,28 @@ async function runCustomSubscriptionBuild() {
 
     testedNodes.sort((a, b) => a.ping - b.ping);
     const optimizedNodes = testedNodes.slice(0, limit);
-    const base64Content = btoa(optimizedNodes.map(n => n.node.uri).join('\n'));
+    const rawUris = optimizedNodes.map(n => n.node.uri).join('\n');
 
     const totalPingOpt = optimizedNodes.reduce((acc, n) => acc + n.ping, 0);
     const avgPing = Math.round(totalPingOpt / optimizedNodes.length);
 
     writeToTerminal(`[УСПЕХ] Отобрано лучших: ${optimizedNodes.length} серверов\n`);
     writeToTerminal(`[СРЕДНИЙ ПИНГ] ${avgPing}мс\n`);
-    writeToTerminal(`[СОВЕТ] Скопируйте подписку и импортируйте из буфера обмена в Happ.\n`);
+    writeToTerminal(`${'─'.repeat(50)}\n`);
+    writeToTerminal(`[ИНСТРУКЦИЯ] Как добавить в Happ:\n`);
+    writeToTerminal(`  1. Нажмите кнопку «Скопировать серверы» ниже\n`);
+    writeToTerminal(`  2. Откройте Happ → вкладка «Подписки»\n`);
+    writeToTerminal(`  3. Нажмите «+» → «Импорт из буфера обмена»\n`);
+    writeToTerminal(`  ⚠️ НЕ «Добавить подписку по ссылке», а именно «Импорт из буфера»!\n`);
 
     metricTested.textContent = benchmarkList.length;
     metricSuccess.textContent = testedNodes.length;
     metricPing.textContent = `${avgPing}мс`;
 
     recBoxTitle.textContent = "Ваша оптимизированная подписка:";
-    recSubName.textContent = `Топ ${optimizedNodes.length} быстрейших серверов (оптимизировано)`;
-    recommendedValue = base64Content;
-    copyRecSubBtn.textContent = "Скопировать подписку в буфер Happ";
+    recSubName.textContent = `Топ ${optimizedNodes.length} быстрейших серверов (⚠️ Используйте «Импорт из буфера» в Happ)`;
+    recommendedValue = rawUris;
+    copyRecSubBtn.textContent = "📋 Скопировать серверы в буфер";
 
     testResults.style.display = "block";
     runCustomBuildBtn.disabled = false;
