@@ -135,51 +135,85 @@
             </div>
 
             <div class="card">
-                <h3 class="card-title">⚡️ Тестировщик и Анализатор подписок</h3>
+                <div class="card-header-tabs">
+                    <button class="tab-btn active" id="tabBtnDiagnostic">🔍 Тест подписки</button>
+                    <button class="tab-btn" id="tabBtnCustom">⚙️ Своя подписка (Оптимизация)</button>
+                </div>
+                
                 <div class="tester-container">
-                    <div class="form-group">
-                        <label for="testGroupSelect">Выберите группу для тестирования:</label>
-                        <select id="testGroupSelect" class="tester-select">
-                            <option value="all">Все подписки (смешанный тест)</option>
-                            <option value="goida">Раздел 1: GOIDA (DPI/SNI bypass)</option>
-                            <option value="reality">Раздел 2: VLESS Reality (обход ТСПУ)</option>
-                            <option value="cidr">Раздел 3: SNI + CIDR Bypass</option>
-                            <option value="epodonios">Раздел 4: Epodonios (быстрый цикл)</option>
-                            <option value="barry">Раздел 5: Barry-far (крупные базы)</option>
-                            <option value="scraped">Раздел 6: TG Автопарсеры</option>
-                            <option value="gaming">Раздел 7: Игровые (низкий пинг)</option>
-                        </select>
+                    <!-- Tab 1: Diagnostic -->
+                    <div class="tab-content" id="tabDiagnostic">
+                        <div class="form-group">
+                            <label for="testGroupSelect">Выберите группу для теста:</label>
+                            <select id="testGroupSelect" class="tester-select">
+                                <option value="all">Все подписки (смешанный тест)</option>
+                                <option value="goida">Раздел 1: GOIDA (DPI/SNI bypass)</option>
+                                <option value="reality">Раздел 2: VLESS Reality (обход ТСПУ)</option>
+                                <option value="cidr">Раздел 3: SNI + CIDR Bypass</option>
+                                <option value="epodonios">Раздел 4: Epodonios (быстрый цикл)</option>
+                                <option value="barry">Раздел 5: Barry-far (крупные базы)</option>
+                                <option value="scraped">Раздел 6: TG Автопарсеры</option>
+                                <option value="gaming">Раздел 7: Игровые (низкий пинг)</option>
+                            </select>
+                        </div>
+                        <button class="tester-btn" id="runTestBtn">Запустить реальный пинг-тест</button>
                     </div>
-                    <button class="tester-btn" id="runTestBtn">Запустить диагностику & пинг</button>
-                    
-                    <div class="terminal-header">
-                        <span class="terminal-dot red"></span>
-                        <span class="terminal-dot yellow"></span>
-                        <span class="terminal-dot green"></span>
-                        <span class="terminal-title">Диагностическая консоль</span>
-                    </div>
-                    <div class="test-terminal" id="testTerminal">Готов к началу диагностики. Выберите группу и нажмите кнопку запуска.</div>
-                    
-                    <div class="test-results-card" id="testResults" style="display: none;">
-                        <h4 class="results-title">🏆 Результаты диагностики:</h4>
-                        <div class="results-grid">
-                            <div class="result-metric">
-                                <span class="metric-val" id="metricTested">0</span>
-                                <span class="metric-lbl">Проверено</span>
+
+                    <!-- Tab 2: Custom -->
+                    <div class="tab-content" id="tabCustom" style="display: none;">
+                        <div class="tester-settings-grid">
+                            <div class="form-group">
+                                <label>Лимит серверов в подписке:</label>
+                                <div class="slider-val-box">
+                                    <input type="range" id="customLimitSlider" min="5" max="100" value="30" class="tester-slider">
+                                    <span class="slider-lbl" id="sliderValDisplay">30 нод</span>
+                                </div>
                             </div>
-                            <div class="result-metric">
-                                <span class="metric-val text-green" id="metricSuccess">0</span>
-                                <span class="metric-lbl">Доступно</span>
-                            </div>
-                            <div class="result-metric">
-                                <span class="metric-val" id="metricPing">0мс</span>
-                                <span class="metric-lbl">Средний пинг</span>
+                            <div class="form-group">
+                                <label>Проверка доступности к сайтам:</label>
+                                <div class="site-check-badges">
+                                    <span class="site-badge active" data-site="youtube.com">YouTube</span>
+                                    <span class="site-badge active" data-site="telegram.org">Telegram</span>
+                                    <span class="site-badge active" data-site="discord.com">Discord</span>
+                                    <span class="site-badge active" data-site="instagram.com">Instagram</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="recommended-server-box">
-                            <h5>Рекомендованная подписка с лучшим пингом:</h5>
-                            <p id="recSubName">Загрузка...</p>
-                            <button class="copy-btn-sm" id="copyRecSubBtn">Копировать ссылку подписки</button>
+                        <button class="tester-btn secondary" id="runCustomBuildBtn">⚡️ Собрать и оптимизировать подписку</button>
+                    </div>
+
+                    <!-- Console & Results -->
+                    <div class="tester-output-container">
+                        <div class="terminal-header">
+                            <span class="terminal-dot red"></span>
+                            <span class="terminal-dot yellow"></span>
+                            <span class="terminal-dot green"></span>
+                            <span class="terminal-title">Диагностическая консоль</span>
+                        </div>
+                        <div class="test-terminal" id="testTerminal">Готов к тесту. Выберите вкладку и нажмите кнопку запуска.</div>
+                        
+                        <!-- Diagnostic Results -->
+                        <div class="test-results-card" id="testResults" style="display: none;">
+                            <h4 class="results-title">🏆 Результаты диагностики:</h4>
+                            <div class="results-grid">
+                                <div class="result-metric">
+                                    <span class="metric-val" id="metricTested">0</span>
+                                    <span class="metric-lbl">Проверено</span>
+                                </div>
+                                <div class="result-metric">
+                                    <span class="metric-val text-green" id="metricSuccess">0</span>
+                                    <span class="metric-lbl">Доступно</span>
+                                </div>
+                                <div class="result-metric">
+                                    <span class="metric-val" id="metricPing">0мс</span>
+                                    <span class="metric-lbl">Средний пинг</span>
+                                </div>
+                            </div>
+                            <div class="recommended-server-box">
+                                <h5 id="recBoxTitle">Рекомендованный сервер:</h5>
+                                <p id="recSubName">-</p>
+                                <button class="copy-btn-sm" id="copyRecSubBtn">Копировать подписку</button>
+                            </div>
                         </div>
                     </div>
                 </div>
