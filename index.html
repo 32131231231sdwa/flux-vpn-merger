@@ -62,8 +62,11 @@
                     <div class="stat-lbl">🇷🇺 Оптимально для РФ</div>
                 </div>
             </div>
-            <div class="update-time">
-                <span>Последнее обновление:</span> <strong id="updateTime">-</strong>
+            <div class="update-time-row">
+                <button class="action-btn-secondary" id="openSourceListBtn">📁 Посмотреть все подписки базы</button>
+                <div class="update-time">
+                    <span>Последнее обновление:</span> <strong id="updateTime">-</strong>
+                </div>
             </div>
         </section>
 
@@ -132,14 +135,54 @@
             </div>
 
             <div class="card">
-                <h3 class="card-title">🛠 Как создать свой авто-объединитель бесплатно</h3>
-                <ol class="guide-list">
-                    <li>Сделайте Fork репозитория на GitHub (или создайте новый репозиторий).</li>
-                    <li>Перенесите туда файлы `merge.py`, `.github/workflows/update.yml`, `index.html`, `styles.css` и `app.js`.</li>
-                    <li>В настройках репозитория: <strong>Settings</strong> → <strong>Actions</strong> → <strong>General</strong> → в самом низу в <strong>Workflow permissions</strong> выберите <strong>"Read and write permissions"</strong>.</li>
-                    <li>Перейдите во вкладку <strong>Settings</strong> → <strong>Pages</strong> → в разделе Build and deployment выберите ветку <code>main</code> (папка <code>/ (root)</code>).</li>
-                    <li>GitHub Actions будет автоматически обновлять ваши конфиги каждые 6 часов, а сайт будет доступен бесплатно.</li>
-                </ol>
+                <h3 class="card-title">⚡️ Тестировщик и Анализатор подписок</h3>
+                <div class="tester-container">
+                    <div class="form-group">
+                        <label for="testGroupSelect">Выберите группу для тестирования:</label>
+                        <select id="testGroupSelect" class="tester-select">
+                            <option value="all">Все подписки (смешанный тест)</option>
+                            <option value="goida">Раздел 1: GOIDA (DPI/SNI bypass)</option>
+                            <option value="reality">Раздел 2: VLESS Reality (обход ТСПУ)</option>
+                            <option value="cidr">Раздел 3: SNI + CIDR Bypass</option>
+                            <option value="epodonios">Раздел 4: Epodonios (быстрый цикл)</option>
+                            <option value="barry">Раздел 5: Barry-far (крупные базы)</option>
+                            <option value="scraped">Раздел 6: TG Автопарсеры</option>
+                            <option value="gaming">Раздел 7: Игровые (низкий пинг)</option>
+                        </select>
+                    </div>
+                    <button class="tester-btn" id="runTestBtn">Запустить диагностику & пинг</button>
+                    
+                    <div class="terminal-header">
+                        <span class="terminal-dot red"></span>
+                        <span class="terminal-dot yellow"></span>
+                        <span class="terminal-dot green"></span>
+                        <span class="terminal-title">Диагностическая консоль</span>
+                    </div>
+                    <div class="test-terminal" id="testTerminal">Готов к началу диагностики. Выберите группу и нажмите кнопку запуска.</div>
+                    
+                    <div class="test-results-card" id="testResults" style="display: none;">
+                        <h4 class="results-title">🏆 Результаты диагностики:</h4>
+                        <div class="results-grid">
+                            <div class="result-metric">
+                                <span class="metric-val" id="metricTested">0</span>
+                                <span class="metric-lbl">Проверено</span>
+                            </div>
+                            <div class="result-metric">
+                                <span class="metric-val text-green" id="metricSuccess">0</span>
+                                <span class="metric-lbl">Доступно</span>
+                            </div>
+                            <div class="result-metric">
+                                <span class="metric-val" id="metricPing">0мс</span>
+                                <span class="metric-lbl">Средний пинг</span>
+                            </div>
+                        </div>
+                        <div class="recommended-server-box">
+                            <h5>Рекомендованная подписка с лучшим пингом:</h5>
+                            <p id="recSubName">Загрузка...</p>
+                            <button class="copy-btn-sm" id="copyRecSubBtn">Копировать ссылку подписки</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -151,6 +194,18 @@
 
     <!-- Toast Notification -->
     <div id="toast" class="toast">Ссылка скопирована в буфер обмена!</div>
+
+    <!-- Modal for Source Subscriptions -->
+    <div id="sourceListModal" class="modal">
+        <div class="modal-content card">
+            <span class="close-modal" id="closeSourceListBtn">&times;</span>
+            <h3 class="card-title">База исходных подписок (100+ источников)</h3>
+            <p class="modal-subtitle">Все оригинальные подписки, используемые в слиянии. Вы можете скопировать любую отдельную ссылку.</p>
+            <div class="modal-scroll-area" id="modalSubscriptionGroups">
+                <!-- Dynamically filled by JS -->
+            </div>
+        </div>
+    </div>
 
     <script src="app.js"></script>
 </body>
