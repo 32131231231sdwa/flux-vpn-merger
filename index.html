@@ -24,13 +24,13 @@
                 <span class="pulse-dot"></span>
                 <h1>FLUX VPN <span>TITANIUM</span></h1>
             </div>
-            <div class="badge">v2.0 Beta · 2026</div>
+            <div class="badge">v2.1 · 2026</div>
         </header>
 
         <!-- Hero Section -->
         <section class="hero">
-            <h2>Сверхскоростная супер-подписка с обходом DPI и ТСПУ</h2>
-            <p>Автоматическое слияние, фильтрация дубликатов и оптимизация более 100 источников VPN в единый URL. Идеально настроено для клиентов Happ, Sing-Box, Shadowrocket, Nekobox и v2rayNG в России.</p>
+            <h2>Найди лучшую VPN-подписку с обходом DPI и ТСПУ</h2>
+            <p>Автоматический анализ и тестирование более 100 источников VPN-подписок. Найдите самую быструю и стабильную подписку или создайте собственную оптимизированную. Идеально для Happ, Sing-Box, Nekobox и v2rayNG.</p>
         </section>
 
         <!-- Stats Dashboard -->
@@ -70,76 +70,69 @@
             </div>
         </section>
 
-        <!-- Generator Section -->
-        <section class="generator-panel card">
-            <h3 class="card-title">Генератор супер-подписки</h3>
-            
-            <div class="form-group">
-                <label>1. Выберите протоколы для включения:</label>
-                <div class="protocol-selectors">
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="checkVless" checked>
-                        <span class="custom-checkbox"></span>
-                        VLESS / Reality
-                    </label>
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="checkVmess" checked>
-                        <span class="custom-checkbox"></span>
-                        VMess
-                    </label>
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="checkTrojan" checked>
-                        <span class="custom-checkbox"></span>
-                        Trojan
-                    </label>
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="checkSs" checked>
-                        <span class="custom-checkbox"></span>
-                        Shadowsocks
-                    </label>
-                    <label class="checkbox-container highlight">
-                        <input type="checkbox" id="checkRuOnly">
-                        <span class="custom-checkbox"></span>
-                        🇷🇺 Только обход блокировок (РФ-оптимизированные)
-                    </label>
-                </div>
-            </div>
+        <!-- Find Best Subscription Section (replaces old generator) -->
+        <section class="finder-panel card">
+            <h3 class="card-title">🔎 Найти лучшую подписку для Happ</h3>
+            <p class="finder-desc">Автоматический анализ каждой подписки из нашей базы. Система загрузит серверы, проверит их скорость и доступность через реальный TCP-пинг, и порекомендует лучшую готовую подписку с оптимальным количеством серверов для Happ.</p>
 
             <div class="form-group">
-                <label>2. Формат кодирования подписки:</label>
-                <div class="format-selectors">
-                    <button type="button" class="format-btn active" id="btnBase64">Base64 (Рекомендуется для Happ)</button>
-                    <button type="button" class="format-btn" id="btnRaw">Raw Text (Обычный текст)</button>
-                </div>
+                <label>Категория подписок для поиска:</label>
+                <select id="finderGroupSelect" class="tester-select">
+                    <option value="all">🔍 Все категории (полный анализ)</option>
+                    <option value="0">🔥 GOIDA — лучшее для России</option>
+                    <option value="1">🔐 XTLS-REALITY — обход ТСПУ</option>
+                    <option value="2">🌐 SNI + CIDR BYPASS</option>
+                    <option value="3">⚡️ EPODONIOS — частые обновления</option>
+                    <option value="4">💎 BARRY-FAR — крупнейшая база</option>
+                    <option value="5">📡 TG Автопарсеры</option>
+                    <option value="6">🎮 Игровые — низкий пинг</option>
+                </select>
             </div>
 
-            <div class="form-group">
-                <label>3. Ваша персональная ссылка:</label>
-                <div class="url-copy-box">
-                    <input type="text" id="subUrlInput" readonly value="Загрузка...">
-                    <button class="copy-btn" id="copyUrlBtn">Копировать</button>
+            <button class="tester-btn" id="runFinderBtn">🚀 Найти лучшую подписку</button>
+
+            <div class="finder-output" id="finderOutputContainer" style="display: none;">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="terminal-title">Анализ подписок в реальном времени</span>
+                </div>
+                <div class="test-terminal" id="finderTerminal">Ожидание запуска...</div>
+
+                <div id="finderResults" style="display: none;">
+                    <h4 class="results-title">🏆 Рейтинг подписок (лучшие сверху):</h4>
+                    <div class="leaderboard" id="finderLeaderboard"></div>
+                    <div class="recommended-server-box" id="finderRecommended" style="display: none;">
+                        <h5>⭐ Лучшая подписка для Happ:</h5>
+                        <p id="finderRecName">-</p>
+                        <div class="url-copy-box finder-url-box">
+                            <input type="text" id="finderRecUrl" readonly value="">
+                            <button class="copy-btn" id="copyFinderRecBtn">Копировать ссылку</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Integration Guide -->
+        <!-- Integration Guide & Tools -->
         <section class="guide-panel grid-2">
             <div class="card">
                 <h3 class="card-title">🚀 Как настроить Happ</h3>
                 <ol class="guide-list">
-                    <li>Скопируйте сгенерированную выше ссылку.</li>
+                    <li>Найдите лучшую подписку выше с помощью теста или создайте собственную оптимизированную подписку.</li>
                     <li>В приложении <strong>Happ</strong>: перейдите во вкладку <strong>Subscriptions</strong> (Подписки) → нажмите <strong>Add</strong> (+) и вставьте ссылку.</li>
                     <li>Нажмите кнопку <strong>Refresh</strong> (🔄) для загрузки серверов.</li>
-                    <li>Перейдите в <strong>Settings</strong> → <strong>Routing</strong> → выберите режим <strong>"Только заблокированные"</strong> (CIDR режим для экономии трафика и максимальной скорости).</li>
+                    <li>Перейдите в <strong>Settings</strong> → <strong>Routing</strong> → выберите режим <strong>"Только заблокированные"</strong> (CIDR режим для максимальной скорости).</li>
                 </ol>
             </div>
 
             <div class="card">
                 <div class="card-header-tabs">
-                    <button class="tab-btn active" id="tabBtnDiagnostic">🔍 Тест подписки</button>
-                    <button class="tab-btn" id="tabBtnCustom">⚙️ Своя подписка (Оптимизация)</button>
+                    <button class="tab-btn active" id="tabBtnDiagnostic">🔍 Тест серверов</button>
+                    <button class="tab-btn" id="tabBtnCustom">⚙️ Своя подписка</button>
                 </div>
-                
+
                 <div class="tester-container">
                     <!-- Tab 1: Diagnostic -->
                     <div class="tab-content" id="tabDiagnostic">
@@ -159,7 +152,7 @@
                         <button class="tester-btn" id="runTestBtn">Запустить реальный пинг-тест</button>
                     </div>
 
-                    <!-- Tab 2: Custom -->
+                    <!-- Tab 2: Custom Subscription Builder -->
                     <div class="tab-content" id="tabCustom" style="display: none;">
                         <div class="tester-settings-grid">
                             <div class="form-group">
@@ -176,6 +169,39 @@
                                     <span class="site-badge active" data-site="telegram.org">Telegram</span>
                                     <span class="site-badge active" data-site="discord.com">Discord</span>
                                     <span class="site-badge active" data-site="instagram.com">Instagram</span>
+                                    <span class="site-badge" data-site="twitter.com">X (Twitter)</span>
+                                    <span class="site-badge" data-site="tiktok.com">TikTok</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="custom-filters-section">
+                            <div class="form-group">
+                                <label>Фильтры серверов:</label>
+                                <div class="protocol-selectors">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="checkFilterUnknown" checked>
+                                        <span class="custom-checkbox"></span>
+                                        🔍 Убрать неизвестные серверы (без страны в названии)
+                                    </label>
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="checkFilterDuplicateHosts">
+                                        <span class="custom-checkbox"></span>
+                                        🚫 Убрать дубликаты по IP/домену
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Предпочтения по странам (нажмите для вкл/выкл):</label>
+                                <div class="site-check-badges" id="countryBadges">
+                                    <span class="site-badge active" data-country="any">🌍 Все</span>
+                                    <span class="site-badge" data-country="RU">🇷🇺 Россия</span>
+                                    <span class="site-badge" data-country="DE">🇩🇪 Германия</span>
+                                    <span class="site-badge" data-country="NL">🇳🇱 Нидерланды</span>
+                                    <span class="site-badge" data-country="US">🇺🇸 США</span>
+                                    <span class="site-badge" data-country="FI">🇫🇮 Финляндия</span>
+                                    <span class="site-badge" data-country="FR">🇫🇷 Франция</span>
+                                    <span class="site-badge" data-country="SG">🇸🇬 Сингапур</span>
+                                    <span class="site-badge" data-country="JP">🇯🇵 Япония</span>
                                 </div>
                             </div>
                         </div>
@@ -191,7 +217,7 @@
                             <span class="terminal-title">Диагностическая консоль</span>
                         </div>
                         <div class="test-terminal" id="testTerminal">Готов к тесту. Выберите вкладку и нажмите кнопку запуска.</div>
-                        
+
                         <!-- Diagnostic Results -->
                         <div class="test-results-card" id="testResults" style="display: none;">
                             <h4 class="results-title">🏆 Результаты диагностики:</h4>
