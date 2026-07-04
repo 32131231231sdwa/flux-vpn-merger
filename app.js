@@ -40,6 +40,7 @@ const tabCustom = document.getElementById('tabCustom');
 const customLimitSlider = document.getElementById('customLimitSlider');
 const sliderValDisplay = document.getElementById('sliderValDisplay');
 const runCustomBuildBtn = document.getElementById('runCustomBuildBtn');
+const checkFilterOnlyVerified = document.getElementById('checkFilterOnlyVerified');
 const checkFilterUnknown = document.getElementById('checkFilterUnknown');
 const checkFilterDuplicateHosts = document.getElementById('checkFilterDuplicateHosts');
 
@@ -874,6 +875,7 @@ async function runCustomSubscriptionBuild() {
     testTerminal.textContent = "";
 
     const limit = parseInt(customLimitSlider.value) || 30;
+    const filterOnlyVerified = checkFilterOnlyVerified.checked;
     const filterUnknown = checkFilterUnknown.checked;
     const filterDuplicates = checkFilterDuplicateHosts.checked;
 
@@ -889,6 +891,7 @@ async function runCustomSubscriptionBuild() {
 
     writeToTerminal(`[ИНИЦИАЛИЗАЦИЯ] Создание оптимизированной подписки...\n`);
     writeToTerminal(`[НАСТРОЙКИ] Лимит: ${limit} серверов\n`);
+    if (filterOnlyVerified) writeToTerminal(`[ФИЛЬТР] ⭐️ Только проверенные источники (без авто-парсеров)\n`);
     if (filterUnknown) writeToTerminal(`[ФИЛЬТР] ✅ Убрать неизвестные серверы (без страны)\n`);
     if (filterDuplicates) writeToTerminal(`[ФИЛЬТР] ✅ Убрать дубликаты по домену\n`);
     if (activeCountries.length > 0) writeToTerminal(`[ФИЛЬТР] 🌍 Только страны: ${activeCountries.join(', ')}\n`);
@@ -916,6 +919,29 @@ async function runCustomSubscriptionBuild() {
 
     // Apply filters
     let beforeFilter = parsedNodes.length;
+
+    if (filterOnlyVerified) {
+        parsedNodes = parsedNodes.filter(n => {
+            const nameLower = n.name.toLowerCase();
+            const hostLower = n.host.toLowerCase();
+            const uriLower = n.uri.toLowerCase();
+            
+            const isVerified = 
+                nameLower.includes("goida") || uriLower.includes("avencores") ||
+                nameLower.includes("kvru") || uriLower.includes("kfwlru") || uriLower.includes("ru-wbl") ||
+                nameLower.includes("igareck") || uriLower.includes("igareck") ||
+                nameLower.includes("str.bypass") || nameLower.includes("strugov") || uriLower.includes("str.bypass") || uriLower.includes("strugov") ||
+                nameLower.includes("sevcator") || uriLower.includes("sevcator") ||
+                nameLower.includes("sakha") || uriLower.includes("sakha") ||
+                nameLower.includes("barry") || uriLower.includes("barry-far") || uriLower.includes("v2ray-config") ||
+                nameLower.includes("epodonios") || uriLower.includes("epodonios") ||
+                uriLower.includes("soroushmirzaei") || uriLower.includes("v2rayroot");
+                
+            return isVerified;
+        });
+        writeToTerminal(`[ФИЛЬТР] Оставлено проверенных: ${parsedNodes.length} (убрано авто-парсеров: ${beforeFilter - parsedNodes.length})\n`);
+        beforeFilter = parsedNodes.length;
+    }
 
     if (filterUnknown) {
         parsedNodes = parsedNodes.filter(n => detectCountry(n.name) !== null);
@@ -948,10 +974,21 @@ async function runCustomSubscriptionBuild() {
         return;
     }
 
-    // Benchmark
-    const benchmarkList = parsedNodes.sort(() => 0.5 - Math.random()).slice(0, Math.min(50, parsedNodes.length));
+    // Benchmark selection: prioritize KvRuVPN and Goida to ensure they are tested
+    const kvRuNodes = parsedNodes.filter(n => {
+        const lowerName = n.name.toLowerCase();
+        const lowerUri = n.uri.toLowerCase();
+        return lowerName.includes("kvru") || lowerUri.includes("kfwlru") || lowerUri.includes("ru-wbl") || lowerName.includes("goida") || lowerUri.includes("avencores");
+    });
+    const otherNodes = parsedNodes.filter(n => !kvRuNodes.includes(n));
+    
+    // Mix them: up to 30 priority nodes + rest from others to make 50 total
+    const prioritySample = kvRuNodes.sort(() => 0.5 - Math.random()).slice(0, 30);
+    const otherSample = otherNodes.sort(() => 0.5 - Math.random()).slice(0, Math.max(0, 50 - prioritySample.length));
+    const benchmarkList = prioritySample.concat(otherSample);
+
     writeToTerminal(`[ТЕСТ] Глубокое тестирование качества ${benchmarkList.length} серверов...\n`);
-    writeToTerminal(`[ИНФО] Каждый сервер проверяется 3 раза на стабильность и потерю пакетов.\n`);
+    writeToTerminal(`[ИНФО] Приоритет отдан KvRuVPN и Goida. Каждый сервер проверяется 3 раза.\n`);
 
     const testedNodes = [];
     const batchSize = 10;
@@ -983,7 +1020,21 @@ async function runCustomSubscriptionBuild() {
         return;
     }
 
-    testedNodes.sort((a, b) => a.ping - b.ping);
+    // Prioritized sorting: give KvRuVPN and Goida virtual ping bonuses to rank them at the top
+    testedNodes.sort((a, b) => {
+        const getScore = (item) => {
+            const nameLower = item.node.name.toLowerCase();
+            const uriLower = item.node.uri.toLowerCase();
+            let bonus = 0;
+            if (nameLower.includes("kvru") || uriLower.includes("kfwlru") || uriLower.includes("ru-wbl")) {
+                bonus = 150; // Huge priority bonus for KvRuVPN
+            } else if (nameLower.includes("goida") || uriLower.includes("avencores")) {
+                bonus = 80;  // Nice bonus for Goida
+            }
+            return item.ping - bonus;
+        };
+        return getScore(a) - getScore(b);
+    });
     const optimizedNodes = testedNodes.slice(0, limit);
     const rawUris = optimizedNodes.map(n => n.node.uri).join('\n');
 
