@@ -254,6 +254,31 @@ def fetch_subscription(url):
             if p_info:
                 is_ru = any(x in url.lower() for x in ['goida', 'gitverse', 'ru-wbl', 'kfwlru', 'igareck', 'str', 'sevcator', 'sakha'])
                 p_info['is_ru_optimized'] = is_ru
+                
+                # Tag name based on source URL
+                name = p_info['name']
+                if "212.txt" in url:
+                    name = f"{name} [212]"
+                
+                p_info['name'] = name
+                
+                # Reconstruct raw URI with updated name
+                proto = p_info['protocol']
+                if proto == 'vmess':
+                    try:
+                        b64_part = p_info['raw'][8:]
+                        b64_part += '=' * (-len(b64_part) % 4)
+                        decoded = base64.b64decode(b64_part).decode('utf-8', errors='ignore').strip()
+                        data = json.loads(decoded)
+                        data['ps'] = name
+                        new_b64 = base64.b64encode(json.dumps(data, ensure_ascii=False).encode('utf-8')).decode('utf-8')
+                        p_info['raw'] = f"vmess://{new_b64}"
+                    except Exception:
+                        pass
+                else:
+                    parts = p_info['raw'].split('#', 1)
+                    p_info['raw'] = parts[0] + '#' + urllib.parse.quote(name)
+                    
                 proxies.append(p_info)
                 
         return proxies

@@ -1013,21 +1013,23 @@ async function runCustomSubscriptionBuild() {
         return;
     }
 
-    // Benchmark selection: prioritize KvRuVPN and Goida to ensure they are tested
-    const kvRuNodes = parsedNodes.filter(n => {
+    // Benchmark selection: prioritize 212.txt first, then Goida and other KvRuVPN to ensure they are tested
+    const nodes212 = parsedNodes.filter(n => n.name.includes("[212]") || n.host.includes("volnalink.uk"));
+    const otherPriorityNodes = parsedNodes.filter(n => {
         const lowerName = n.name.toLowerCase();
         const lowerUri = n.uri.toLowerCase();
-        return lowerName.includes("kvru") || lowerUri.includes("kfwlru") || lowerUri.includes("ru-wbl") || lowerName.includes("goida") || lowerUri.includes("avencores");
+        return (lowerName.includes("kvru") || lowerUri.includes("kfwlru") || lowerUri.includes("ru-wbl") || lowerName.includes("goida") || lowerUri.includes("avencores")) && !nodes212.includes(n);
     });
-    const otherNodes = parsedNodes.filter(n => !kvRuNodes.includes(n));
+    const regularNodes = parsedNodes.filter(n => !nodes212.includes(n) && !otherPriorityNodes.includes(n));
     
-    // Mix them: up to 30 priority nodes + rest from others to make 50 total
-    const prioritySample = kvRuNodes.sort(() => 0.5 - Math.random()).slice(0, 30);
-    const otherSample = otherNodes.sort(() => 0.5 - Math.random()).slice(0, Math.max(0, 50 - prioritySample.length));
-    const benchmarkList = prioritySample.concat(otherSample);
+    // Take all nodes from 212 (up to 30), then fill up to 45 with other priorities, then rest up to 50
+    const sample212 = nodes212.sort(() => 0.5 - Math.random()).slice(0, 30);
+    const samplePriority = otherPriorityNodes.sort(() => 0.5 - Math.random()).slice(0, Math.max(0, 45 - sample212.length));
+    const sampleRegular = regularNodes.sort(() => 0.5 - Math.random()).slice(0, Math.max(0, 50 - sample212.length - samplePriority.length));
+    const benchmarkList = sample212.concat(samplePriority, sampleRegular);
 
     writeToTerminal(`[ТЕСТ] Глубокое тестирование качества ${benchmarkList.length} серверов...\n`);
-    writeToTerminal(`[ИНФО] Приоритет отдан KvRuVPN и Goida. Каждый сервер проверяется 3 раза.\n`);
+    writeToTerminal(`[ИНФО] Наивысший приоритет: 212.txt (основная KvRuVPN). Проверка 3 раза.\n`);
 
     const testedNodes = [];
     const batchSize = 10;
@@ -1059,16 +1061,19 @@ async function runCustomSubscriptionBuild() {
         return;
     }
 
-    // Prioritized sorting: give KvRuVPN and Goida virtual ping bonuses to rank them at the top
+    // Prioritized sorting: give absolute priority to 212.txt, then general KvRuVPN and Goida
     testedNodes.sort((a, b) => {
         const getScore = (item) => {
             const nameLower = item.node.name.toLowerCase();
             const uriLower = item.node.uri.toLowerCase();
+            const hostLower = item.node.host.toLowerCase();
             let bonus = 0;
-            if (nameLower.includes("kvru") || uriLower.includes("kfwlru") || uriLower.includes("ru-wbl")) {
-                bonus = 150; // Huge priority bonus for KvRuVPN
+            if (nameLower.includes("[212]") || hostLower.includes("volnalink.uk")) {
+                bonus = 250; // Absolute top priority for the main 212.txt KvRuVPN subscription
+            } else if (nameLower.includes("kvru") || uriLower.includes("kfwlru") || uriLower.includes("ru-wbl")) {
+                bonus = 120; // High priority for other KvRuVPN lists
             } else if (nameLower.includes("goida") || uriLower.includes("avencores")) {
-                bonus = 80;  // Nice bonus for Goida
+                bonus = 80;  // Normal priority bonus for Goida
             }
             return item.ping - bonus;
         };
