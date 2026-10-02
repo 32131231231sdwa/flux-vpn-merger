@@ -1,11 +1,11 @@
 {
-    "last_updated": "2026-10-02 04:18:39 UTC",
+    "last_updated": "2026-10-02 11:57:57 UTC",
     "total_nodes": 2500,
     "protocols": {
         "vless": 1000,
-        "vmess": 118,
-        "trojan": 88,
-        "shadowsocks": 45
+        "vmess": 86,
+        "trojan": 403,
+        "shadowsocks": 208
     },
-    "russia_optimized": 256
+    "russia_optimized": 347
 }
